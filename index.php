@@ -81,7 +81,7 @@ function showCategories(){
 }
 
 function showCategory($intCategoryID){
-	global $arrFiles, $arrCoreVersions;
+	global $arrFiles, $arrCoreVersions, $arrCoreUpdates;
 	
 	$out = '<a href="index.php"><i class="fa fa-chevron-left fa-lg" style="font-size: 20px;"></i> Back to Categories</a><br /><br />';
 
@@ -111,7 +111,27 @@ function showCategory($intCategoryID){
 
 		</div>
 		<div class="clear"></div>
+		
+		
+	</div>
+	
+	<h2>Core Updates</h2>
+	';
+	//Display Core Updates
+	if(is_array($arrCoreUpdates)){
+		$out .= '<div class="extCategoryContainer">';
+		
+		foreach($arrCoreUpdates as $key => $val){
+			$strDownloadLink = ($val['sf_filename'] != "") ? $val['sf_filename'] : 'http://'.get_random_mirror().'/'.$val['filename'];
+			$out .= '<a href="'.$strDownloadLink.'" style="display:block;"><i class="fa fa-lg fa-download"></i> '.$val['name'].'</a>';
+		}
+		
+		$out .= '<div class="clear"></div>
+		
+		
 	</div>';
+	}
+	
 			break;
 			
 		}
