@@ -330,39 +330,78 @@ function execute(){
 							}
 							
 							*[class*="grid"] {
-    float: left;
-    margin-left: 10px;
-    margin-right: 10px;
-    display: inline;
-}
+								float: left;
+								margin-left: 10px;
+								margin-right: 10px;
+								display: inline;
+							}
 
-.grid1 {
-    width: 60px;
-}
+							.grid1 {
+								width: 60px;
+							}
 
-.clear {
-	clear: both;
-}
+							.clear {
+								clear: both;
+							}
 
-.header h1 {
-    padding-left: 40px;
-    padding-top: 30px;
-    font-size: 50px;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px #fff;
-    filter: dropshadow(color=#fff, offx=1, offy=1);
-    border: none;
-	line-height: 55px;
-}
+							.header h1 {
+								padding-left: 40px;
+								padding-top: 30px;
+								font-size: 50px;
+								font-weight: bold;
+								text-shadow: 1px 1px 2px #fff;
+								filter: dropshadow(color=#fff, offx=1, offy=1);
+								border: none;
+								line-height: 55px;
+							}
 
-.header img {
-	float: left;
-}
+							.header img {
+								float: left;
+							}
 
-.headerInner{
-	width: 960px;
-	margin: auto;
-}
+							.headerInner{
+								width: 960px;
+								margin: auto;
+							}
+							
+							@media all and (max-width: 899px) {
+								.grid50 {
+									float: none;
+									margin-left: 0px;
+									margin-right: 0px;
+									display: block;
+									width: 95%;
+								}
+								
+								.headerInner img {
+									width: 150px;
+									float: none;
+									display: none;
+								}
+								
+								.content {
+									width: 95%;
+								}
+								.headerInner{
+									width: 100%;
+								}
+								
+								
+								.headerInner h1 {
+									padding-left: 5px;
+									padding-top: 5px;
+									font-size: 30px;
+									line-height: 35px;
+								}
+								
+								.fb-page, 
+								.fb-page span, 
+								.fb-page span iframe[style] { 
+									width: 100% !important; 
+								}
+							}
+
+
 						</style>
 						</head>
 
