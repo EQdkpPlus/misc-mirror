@@ -202,6 +202,7 @@ function execute(){
 
 							<title>EQdkp Plus - Repository Mirror 1</title>
 							<link rel='stylesheet' href='src/fontawesome/font-awesome.min.css' type='text/css' media='screen' />
+							<meta name="viewport" content="width=device-width, initial-scale=1" />
 							<style type="text/css">
 							/* body */
 							html {
