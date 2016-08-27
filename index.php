@@ -15,6 +15,14 @@ $strParam = false;
 if(isset($_GET['c'])){
 	$strParam = intval($_GET['c']);
 	$strAction = 'category';
+}elseif(isset($_GET['dl'])){
+	$strAction = 'download';
+	$strParam = filter_var($_GET['dl'], FILTER_SANITIZE_STRING);
+}elseif(isset($_GET['dl_upd'])){
+	$strAction = 'download_update';
+	$strParam = intval($_GET['dl_upd']);
+}elseif(isset($_GET['help'])){
+	$strAction = 'help';
 }
 
 
@@ -80,13 +88,78 @@ function showCategories(){
 	return $out;
 }
 
+function download($strParam){
+	global $arrFiles;
+	
+	if($strParam == 'core' && isset($arrFiles['extension_pk'])){
+		$val = $arrFiles['extension_pk'];
+		$strDownloadLink = ($val['sf_filename'] != "") ? $val['sf_filename'] : 'http://'.get_random_mirror().'/'.$val['filename'];
+		return generate_thankyou($strDownloadLink, "EQdkp Plus");
+	} elseif(isset($arrFiles[$strParam])){
+		$val = $arrFiles[$strParam];
+		$strDownloadLink = ($val['sf_filename'] != "") ? $val['sf_filename'] : 'http://'.get_random_mirror().'/'.$val['filename'];
+		return generate_thankyou($strDownloadLink, "this EQdkp Plus Extension");
+	}
+	
+	return "Sorry, could not found package. Please check your link.";
+}
+
+function download_update($strParam){
+	global $arrCoreUpdates, $strParam;
+	
+	if(isset($arrCoreUpdates[$strParam])){
+		$val = $arrCoreUpdates[$strParam];
+		$strDownloadLink = ($val['sf_filename'] != "") ? $val['sf_filename'] : 'http://'.get_random_mirror().'/'.$val['filename'];
+		return generate_thankyou($strDownloadLink, "this EQdkp Plus Update");
+	}
+	
+	return "Sorry, could not found package. Please check your link.";
+}
+
+function generate_thankyou($strURL, $strText){
+	$out = '<meta http-equiv="refresh" content="3;url='.$strURL.'">';
+	$out .= '<div style="font-size:34px; padding-top: 10px;">Thank you for downloading '.$strText.'!</div><br><br>
+<div style="font-size:16px;">Your download should start automatically. If it doesn\'t, <a href="'.$strURL.'">download here</a>.
+<br /><br />
+<a href="?help"><i class="fa fa-question-circle"></i> Need help with your download file? Take a look at our help page</a></div>
+<br><br><br>
+<i class="fa fa-heart fa-5x" style="color:red;vertical-align:middle;"></i>
+						<span class="fa-stack fa-lg" style="margin-left: -30px; margin-bottom: -10px; margin-right: 10px;">
+						<i class="fa fa-circle fa-stack-2x"></i>
+  						<i class="fa fa-usd fa-stack-1x fa-inverse"></i>
+						</span><h1 style="display:inline; font-size:24px;">Support us</h1>
+						
+<div>
+A project like EQdkp Plus can only exist, if we can get back some of the effort, time and love we invest in EQdkp Plus. You can give something back on the following ways:
+						<ul style="margin-left:20px; list-style:inherit;">
+							<li style="padding: 3px;"><i class="fa fa-usd" style="font-size:1.5em;"></i> <a onclick="document.getElementById(\'paypal\').submit();" style="cursor:pointer;">Support us financially so we can continue offering you our services like LiveUpdate</a></li>	
+							<li style="padding: 3px;"><i class="fa fa-puzzle-piece" style="font-size:1.5em;"></i> <a href="http://eqdkp-plus.eu/repository/">Publish a plugin or template, so every EQdkp Plus user can use it</a></li>
+							<li style="padding: 3px;"><i class="fa fa-comments" style="font-size:1.5em;"></i> <a href="http://eqdkp-plus.eu/forum/">Support us at our board</a></li>
+							<li style="padding: 3px;"><i class="fa fa-cogs" style="font-size:1.5em;"></i> <a href="https://eqdkp-plus.eu/en/development.html">Take part actively in the development of EQdkp Plus</a></li>
+						</ul>
+						<br>So if you <i class="fa fa-heart" style="font-size:1.5em;"></i> EQdkp Plus as much as we do, think about supporting us!
+</div>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" id="paypal" name="paypal">
+<input type="hidden" name="cmd" value="_donations">
+<input type="hidden" name="business" value="team@eqdkp-plus.eu">
+<input type="hidden" name="lc" value="DE">
+<input type="hidden" name="item_name" value="EQdkp Plus">
+<input type="hidden" name="no_note" value="0">
+<input type="hidden" name="currency_code" value="EUR">
+<input type="hidden" name="bn" value="PP-DonationsBF:btn_donateCC_LG.gif:NonHostedGuest">
+</form>
+
+';						
+	return $out;
+}
+
 function showCategory($intCategoryID){
 	global $arrFiles, $arrCoreVersions, $arrCoreUpdates;
 	
 	$out = '<a href="index.php"><i class="fa fa-chevron-left fa-lg" style="font-size: 20px;"></i> Back to Categories</a><br /><br />';
 
 	foreach($arrFiles as $key => $val){
-		$strDownloadLink = ($val['sf_filename'] != "") ? $val['sf_filename'] : 'http://'.get_random_mirror().'/'.$val['filename'];
+		$strDownloadLink = '?dl=core';
 
 		if($intCategoryID == 0 && $key === 'extension_pk'){
 
@@ -121,8 +194,8 @@ function showCategory($intCategoryID){
 	if(is_array($arrCoreUpdates)){
 		$out .= '<div class="extCategoryContainer">';
 		
-		foreach($arrCoreUpdates as $key => $val){
-			$strDownloadLink = ($val['sf_filename'] != "") ? $val['sf_filename'] : 'http://'.get_random_mirror().'/'.$val['filename'];
+		foreach($arrCoreUpdates as $key2 => $val){
+			$strDownloadLink = '?dl_upd='.$key2;
 			$out .= '<a href="'.$strDownloadLink.'" style="display:block;"><i class="fa fa-lg fa-download"></i> '.$val['name'].'</a>';
 		}
 		
@@ -138,7 +211,7 @@ function showCategory($intCategoryID){
 		
 		if($intCategoryID == $val['category']){
 			if($key === 'extension_pk') continue;
-			
+			$strDownloadLink = '?dl='.$key;
 			$out .= '<div class="extCategoryContainer">
 		<div>
 			<div class="grid1">
@@ -184,6 +257,91 @@ function get_random_mirror(){
 	return $arrMirrorlist[$randomKey];
 }
 
+function display_help(){
+	$out = '
+      <h2>Install EQdkp Plus</h2>
+      <p>Not everyone is a web professional. That\'s why we have collected the most serious steps needed to get started with EQdkp Plus.</p>  
+
+      <h3>Download &amp; Upload</h3>
+  
+  
+      <ul>
+<li>First, Download the EQdkp Plus Core Package</li>
+<li>Unzip the Package on your local PC</li>
+<li>Upload the two files (one zip-Archive and one file named install.php) into the desired folder of your webspace.</li>
+<li>Open the install.php with your browser. If you had uploaded the files into the folder "<em>eqdkp</em>", you have to browse to www.deinedomain.de/eqdkp/install.php</li>
+<li>Now the package will be unzipped and you will redirected to the Installer of EQdkp Plus</li>
+<li>If the package can\'t be unzipped, you have to unzip the uploaded archive on your local PC und upload all unzipped files to the desired folder of your webspace.</li>
+</ul>  
+
+
+      <h3>Installation</h3>
+  
+  
+      <ul>
+<li>First, the <a href="en/requirements.html" title="Requirements">Requirements</a> of your server will be checked</li>
+<li>If php safemode is enabled or you don\'t want to give folders writing permissions, you can activate the FTP-Mode. Ask your Hoster for the FTP Credentials.</li>
+<li>Create a random Encryption-Key that you should store securly. With this Key, critical information will be stored encrypted, like your users\' Email-Addreses.</li>
+<li>Next, insert the Database-Credentials provided by your Hoster.</li>
+<li>Now select the game and some other settings. All settings can be changed after the installation, too.</li>
+</ul> 
+	
+	<h2>Update EQdkp Plus</span></h2>	
+	To update your EQdkp Plus installation, you can
+	      <ul>
+<li>Use a suitable Update packages</li>
+<li>Use the latest core packages</li>
+</ul> 
+The difference between those options is just the size of the package and the amount of included files. 
+For both, the instructions are:
+      <ul>
+<li>Download update package or core package</li>
+<li>Extract the downloaded package on local PC or your server</li>
+<li>Replace the existing files with the extracted files</li>
+<li>Follow the instructions at the maintenance mode, if there are database changes needed</li>
+</ul> 
+	
+
+<h2>Install or Upgrade Extensions manually</span></h2>
+<ul><li>Download the extension you want.Make sure the EQdkp Plus Version fits with the Extension</li>
+<li> Extract the downloaded extension. You will get some folders. The first one is named like the package name, e.g. plugin-chat-0.1.1.</li>
+<li> Open the package.xml in the root folder of your downloaded extension and note down the values for "install type" and "folder".</li>
+<li> Go to your EQdkp Plus installation and create a folder, dependend of type and folder, see <a href="#Types_and_folders">#Types and folders</a></li>
+<li> Upload the extension files to your created folder. You have to take the files from the folder "plugin-chat-0.1.1", that means the first folder where a .php file can be found.</li></ul>
+
+<h2><span class="mw-headline" id="Types_and_folders">Types and folders</span></h2>
+<table class="wikitable table">
+
+<tbody><tr class="hintergrundfarbe5">
+<th width="120px;"> Type </th>
+<th> folder
+</th></tr>
+<tr>
+<td> <b>plugin</b> </td>
+<td> plugins/<i>FOLDER_FROM_PACKAGE_XML</i>
+</td></tr>
+<tr>
+<td> <b>template</b> </td>
+<td> templates/<i>FOLDER_FROM_PACKAGE_XML</i>
+</td></tr>
+<tr>
+<td> <b>portal</b> </td>
+<td> portal/<i>FOLDER_FROM_PACKAGE_XML</i>
+</td></tr>
+<tr>
+<td> <b>game</b> </td>
+<td> games/<i>FOLDER_FROM_PACKAGE_XML</i>
+</td></tr>
+<tr>
+<td> <b>language</b> </td>
+<td> <i>EQdkp-Root-folder</i>
+</td></tr></tbody></table>
+
+';
+	
+	return $out;
+}
+
 function execute(){
 	global $strAction, $strParam;
 	
@@ -191,6 +349,12 @@ function execute(){
 		echo showCategories();
 	} elseif($strAction == 'category'){
 		showCategory($strParam);
+	} elseif($strAction == 'download'){
+		echo download($strParam);
+	} elseif($strAction == 'download_update'){
+		echo download_update($strParam);
+	}elseif($strAction == 'help'){
+		echo display_help();
 	}
 }
 
@@ -363,6 +527,21 @@ function execute(){
 							.headerInner{
 								width: 960px;
 								margin: auto;
+							}
+							
+							table, th, td {
+							   border-bottom: 1px solid #ddd;
+							   padding: 2px;
+							}
+							
+							th {
+								background-color: #efefef;
+							}
+							
+							tr:nth-child(even) {background-color: #f2f2f2}
+
+							td {
+								padding: 5px;
 							}
 							
 							@media all and (max-width: 899px) {
